@@ -1,0 +1,7 @@
+.*
+*.pyc
+*~
+*.mat
+raw_download
+proc_temp
+*.jugdata
