@@ -95,6 +95,7 @@ def process_household_electric():
                      parse_dates=[[0, 1]], infer_datetime_format=True)
     df = df[df.isnull().sum(axis=1) == 0]
     month = df.Date_Time.dt.month
+    return df
 
 
 def process_protein():
