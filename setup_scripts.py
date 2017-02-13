@@ -1,13 +1,15 @@
 # Download and process all datasets
 from __future__ import print_function
+
 import os
 import sys
-import requests
 import zipfile
+
 import numpy as np
 import numpy.random as rnd
-from scipy.io import loadmat, savemat
 import pandas as pd
+import requests
+from scipy.io import loadmat, savemat
 
 basepath = os.path.dirname(os.path.realpath(__file__))
 
@@ -102,19 +104,10 @@ def process_protein():
     print("Processing protein")
     data = np.loadtxt("%s/CASP.csv" % download_target_folder, delimiter=',', skiprows=1)
     aX = data[:, 1:]
+    aX = (aX - np.mean(aX, 1)[:, None]) / np.std(aX, 1)[:, None]
     aY = data[:, 0, None]
-
-    edge = int(np.floor(len(aX) * 0.9))
-    for split in range(5):
-        perm = rnd.permutation(len(aX))
-        trX = aX[perm[:edge], :]
-        trY = aY[perm[:edge], :]
-        teX = aX[perm[edge:], :]
-        teY = aY[perm[edge:], :]
-        savemat("%s/protein%i.mat" % (datasets_store_dir, split),
-                {'X': trX, 'Y': trY, 'tX': teX, 'tY': teY, 'name': "protein",
-                 'description': "Protein Tertiary Structure",
-                 "url": download_urls["protein"]})
+    aY = (aY - np.mean(aY)) / np.std(aY)
+    save_splits(aX, aY, 5, "protein", "Protein tertiary structure", download_urls["protein"])
 
 
 def process_naval():

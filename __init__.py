@@ -2,7 +2,7 @@ import glob
 import os
 import numpy as np
 import scipy.io
-from .setup_datasets import setup_datasets
+from .setup_scripts import setup_datasets
 
 
 class Dataset(object):
