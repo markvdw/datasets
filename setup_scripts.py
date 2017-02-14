@@ -104,8 +104,8 @@ def process_protein():
     print("Processing protein")
     data = np.loadtxt("%s/CASP.csv" % download_target_folder, delimiter=',', skiprows=1)
     aX = data[:, 1:]
-    aX = (aX - np.mean(aX, 1)[:, None]) / np.std(aX, 1)[:, None]
-    aY = data[:, 0, None]
+    aX = (aX - np.mean(aX, 0)[None, :]) / np.std(aX, 0)[None, :]
+    aY = np.log(data[:, 0, None] + 1)
     aY = (aY - np.mean(aY)) / np.std(aY)
     save_splits(aX, aY, 5, "protein", "Protein tertiary structure", download_urls["protein"])
 
