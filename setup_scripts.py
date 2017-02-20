@@ -178,8 +178,8 @@ def process_kegg():
                     na_values='?', header=None)
     d = d[d.isnull().sum(1) == 0]
     d = d[d.iloc[:, 21] <= 1]
-    d = d.iloc[:, np.hstack([np.arange(1, 10), np.arange(11, 28)])]
-    X = np.array(d).astype('float')
+    d = d.iloc[:, np.hstack([np.arange(1, 10), np.arange(11, 29)])]
+    X = np.array(d.iloc[:, :-1]).astype('float')
     Y = np.log(np.array(d.iloc[:, -1]).astype('float')[:, None])
 
     X = X - np.mean(X, 0)[None, :]
