@@ -25,7 +25,9 @@ download_urls = {
     "kin40k": "http://www.tsc.uc3m.es/~miguel/code/datasets.zip",
     "house-electric": "https://archive.ics.uci.edu/ml/machine-learning-databases/00235/household_power_consumption.zip",
     "naval": "https://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip",
-    "snelson": "http://www.gatsby.ucl.ac.uk/~snelson/SPGP_dist.zip"}
+    "snelson": "http://www.gatsby.ucl.ac.uk/~snelson/SPGP_dist.zip",
+    "keggu": "https://archive.ics.uci.edu/ml/machine-learning-databases/00221/Reaction%20Network%20(Undirected).data",
+    "kegg": "https://archive.ics.uci.edu/ml/machine-learning-databases/00220/Relation%20Network%20(Directed).data"}
 
 
 def download_file(url, target_dir='.'):
@@ -170,6 +172,25 @@ def process_mnist():
              })
 
 
+def process_kegg():
+    print("Processing KEGG")
+    d = pd.read_csv("%s/Reaction%%20Network%%20(Undirected).data" % download_target_folder, delimiter=',',
+                    na_values='?', header=None)
+    d = d[d.isnull().sum(1) == 0]
+    d = d[d.iloc[:, 21] <= 1]
+    d = d.iloc[:, np.hstack([np.arange(1, 10), np.arange(11, 28)])]
+    X = np.array(d).astype('float')
+    Y = np.log(np.array(d.iloc[:, -1]).astype('float')[:, None])
+
+    X = X - np.mean(X, 0)[None, :]
+    X = X / np.std(X, 0)[None, :]
+
+    Y -= np.mean(Y)
+    Y /= np.std(Y)
+
+    save_splits(X, Y, 3, "keggu", "KEGGU", download_urls["keggu"])
+
+
 def setup_datasets():
     for dir in required_directories:
         if not os.path.exists(dir):
@@ -188,10 +209,11 @@ def setup_datasets():
     print("")
 
     print("Processing downloaded files...")
-    process_yearpredmsd()
-    process_kin40k()
-    process_protein()
+    # process_yearpredmsd()
+    # process_kin40k()
+    # process_protein()
     # process_household_electric()
-    process_naval()
-    process_snelson()
-    process_mnist()
+    # process_naval()
+    # process_snelson()
+    # process_mnist()
+    process_kegg()
