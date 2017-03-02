@@ -27,7 +27,8 @@ download_urls = {
     "naval": "https://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip",
     "snelson": "http://www.gatsby.ucl.ac.uk/~snelson/SPGP_dist.zip",
     "keggu": "https://archive.ics.uci.edu/ml/machine-learning-databases/00221/Reaction%20Network%20(Undirected).data",
-    "kegg": "https://archive.ics.uci.edu/ml/machine-learning-databases/00220/Relation%20Network%20(Directed).data"}
+    "kegg": "https://archive.ics.uci.edu/ml/machine-learning-databases/00220/Relation%20Network%20(Directed).data",
+    "parkinsons": "https://archive.ics.uci.edu/ml/machine-learning-databases/parkinsons/telemonitoring/parkinsons_updrs.data"}
 
 
 def download_file(url, target_dir='.'):
@@ -191,6 +192,17 @@ def process_kegg():
     save_splits(X, Y, 3, "keggu", "KEGGU", download_urls["keggu"])
 
 
+def process_parkinsons():
+    df = pd.read_csv("%s/parkinsons_updrs.data" % download_target_folder, delimiter=",")
+    y = np.array(df.iloc[:, 5][:, None])
+    x = np.array(df.iloc[:, np.hstack([np.arange(0, 4), np.arange(6, 22)])])
+
+    X = (x - np.mean(x, 0)[None, :]) / np.std(x, 0)[None, :]
+    Y = (y - np.mean(y)) / np.std(y)
+
+    save_splits(X, Y, 2, "parkinsons", "parkinsons", download_urls["parkinsons"])
+
+
 def setup_datasets():
     for dir in required_directories:
         if not os.path.exists(dir):
@@ -209,7 +221,7 @@ def setup_datasets():
     print("")
 
     print("Processing downloaded files...")
-    process_yearpredmsd()
+    # process_yearpredmsd()
     process_kin40k()
     process_protein()
     # process_household_electric()
@@ -217,3 +229,4 @@ def setup_datasets():
     process_snelson()
     process_mnist()
     process_kegg()
+    process_parkinsons()
