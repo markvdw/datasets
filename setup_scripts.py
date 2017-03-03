@@ -28,7 +28,8 @@ download_urls = {
     "snelson": "http://www.gatsby.ucl.ac.uk/~snelson/SPGP_dist.zip",
     "keggu": "https://archive.ics.uci.edu/ml/machine-learning-databases/00221/Reaction%20Network%20(Undirected).data",
     "kegg": "https://archive.ics.uci.edu/ml/machine-learning-databases/00220/Relation%20Network%20(Directed).data",
-    "parkinsons": "https://archive.ics.uci.edu/ml/machine-learning-databases/parkinsons/telemonitoring/parkinsons_updrs.data"}
+    "parkinsons": "https://archive.ics.uci.edu/ml/machine-learning-databases/parkinsons/telemonitoring/parkinsons_updrs.data",
+    "pumadyn32nm": "http://www.tsc.uc3m.es/~miguel/code/datasets.zip"}
 
 
 def download_file(url, target_dir='.'):
@@ -89,6 +90,17 @@ def process_kin40k():
     aX = np.vstack((mat["X_tr"], mat["X_tst"]))
     aY = np.vstack((mat["T_tr"], mat["T_tst"]))
     save_splits(aX, aY, 5, "kin40k-30k", "kin40k, classic dataset, large training split", download_urls['kin40k'])
+
+
+def process_pumadyn32nm():
+    print("Processing pumadyn32nm")
+    zf = zipfile.ZipFile("%s/datasets.zip" % download_target_folder)
+    zf.extractall(process_temp_folder)
+    mat = loadmat("%s/datasets/pumadyn32nm.mat" % process_temp_folder)
+    m = np.mean(mat["X_tr"], 0)
+    savemat("%s/pumadyn32nm" % datasets_store_dir,
+            {'X': mat["X_tr"] - m[None, :], 'Y': mat["T_tr"], 'tX': mat["X_tst"] - m[None, :], 'tY': mat["T_tst"],
+             "name": "pumadyn32nm", 'description': "pumadyn32nm, classic dataset", "url": download_urls["pumadyn32nm"]})
 
 
 def process_household_electric():
@@ -230,3 +242,4 @@ def setup_datasets():
     process_mnist()
     process_kegg()
     process_parkinsons()
+    process_pumadyn32nm()
